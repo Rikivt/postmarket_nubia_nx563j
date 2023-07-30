@@ -1,0 +1,51 @@
+# Reference: <https://postmarketos.org/devicepkg>
+pkgname=device-nubia-nx563j
+pkgdesc="Nubia Z17"
+pkgver=0.1
+pkgrel=0
+url="https://postmarketos.org"
+license="MIT"
+arch="aarch64"
+options="!check !archcheck"
+depends="
+	linux-postmarketos-qcom-msm8998
+	mkbootimg
+	postmarketos-base
+	postmarketos-update-kernel
+	soc-qcom-sdm845
+"
+makedepends="devicepkg-dev"
+source="
+	deviceinfo
+	phoc.ini
+"
+
+subpackages="
+	$pkgname-nonfree-firmware:nonfree_firmware
+	$pkgname-phosh
+"
+
+build() {
+	devicepkg_build $startdir $pkgname
+}
+
+package() {
+	devicepkg_package $startdir $pkgname
+}
+
+nonfree_firmware() {
+	pkgdesc="Firmware for GPU, Wi-Fi, Bluetooth etc. (mainline only, also needed for osk-sdl)"
+	depends="firmware-nubia-nx563j"
+	mkdir "$subpkgdir"
+}
+
+phosh() {
+	install_if="$pkgname postmarketos-ui-phosh"
+	install -Dm644 "$srcdir"/phoc.ini \
+		"$subpkgdir"/etc/phosh/phoc.ini
+}
+
+sha512sums="
+17b8dd8e5e75d790bb07e44f01682063b258648287f99a2156366577bd2a5fe3312d733bb5fda44b8ea8110d0e5c3d36a41fc45c5c84b054c28ea9c5884eb30d  deviceinfo
+2288f08a44aae5136c0c0c846501c2bd4bcb10f05454b40c6e4490d398385b8a7129216047b5eb7982ca6d62d3aa71f3e18bfb8661d0cd32c8a600685ca0da48  phoc.ini
+"

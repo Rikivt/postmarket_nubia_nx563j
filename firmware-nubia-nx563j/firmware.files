@@ -1,0 +1,13 @@
+ath10k/WCN3990/hw1.0/board-2.bin
+ath10k/WCN3990/hw1.0/firmware-5.bin
+qcom/a540_gpmu.fw2
+qcom/msm8998/nubia/a540_zap.mbn
+qcom/msm8998/nubia/adsp.mbn
+qcom/msm8998/nubia/adspua.jsn
+qcom/msm8998/nubia/ipa_fws.mbn
+qcom/msm8998/nubia/mba.mbn
+qcom/msm8998/nubia/modem.mbn
+qcom/msm8998/nubia/modemuw.jsn
+qcom/msm8998/nubia/slpi_v2.mbn
+qcom/msm8998/nubia/slpius.jsn
+qcom/msm8998/nubia/wlanmdsp.mbn

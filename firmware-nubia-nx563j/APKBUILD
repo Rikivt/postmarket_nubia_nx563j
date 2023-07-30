@@ -1,0 +1,42 @@
+# Maintainer: Marsh Jiang <1208879283@qq.com>
+# Based on firmware-oneplus-msm8998 package
+pkgname=firmware-nubia-nx563j
+pkgver=1
+pkgrel=0
+_commit="e7e52305b75a44f8cde1cdf113d349551820971f"
+pkgdesc="Firmware for Nubia Z17"
+url="https://github.com/Rikivt/firmware-mainline-nubia-nx563j.git"
+replaces="linux-firmware-ath10k"
+arch="aarch64"
+depends="firmware-qcom-adreno-a530 linux-firmware-qca soc-qcom-msm8998-nonfree-firmware"
+install="$pkgname.post-install"
+license="proprietary"
+options="!check !archcheck !strip !tracedeps"
+source="
+	$pkgname-$_commit.tar.gz::https://github.com/Rikivt/firmware-mainline-nubia-nx563j/archive/$_commit.tar.gz
+	30-gpu-firmware.files
+	firmware.files
+"
+subpackages="$pkgname-initramfs:firmware_initramfs"
+builddir="$srcdir/firmware-mainline-nubia-nx563j-$_commit"
+
+package() {
+	while IFS="" read -r fw; do
+		install -Dm644 "$fw" "$pkgdir/lib/firmware/$fw"
+	done < "$srcdir"/firmware.files
+}
+
+firmware_initramfs() {
+	pkgdesc="Files to be included in the initramfs to support osk-sdl"
+	depends="$pkgname mesa-egl mesa-gbm"
+	install_if="$pkgname"
+
+	install -Dm644 "$srcdir"/30-gpu-firmware.files \
+		"$subpkgdir"/etc/postmarketos-mkinitfs/files/30-gpu-firmware.files
+}
+
+sha512sums="
+ef1f31907e661f3c5c73f7f2a0405d7b8ae00ec36334371e06e60e79b327b6ea294a93d5c51486f1b9f7fa262243b7950f8dbf32ed80c5590b62b4243e0cad50  firmware-nubia-nx563j-e7e52305b75a44f8cde1cdf113d349551820971f.tar.gz
+3238e541dbf6e3cdb072c9b62972de4250ae1a16d3f41bf321551d9c434caff9ebac1aff240ba023671b120c879d319bdfb89b491c7ef52efb3971ce1d8c4a49  30-gpu-firmware.files
+41125b633c132a7bd04b7d35a2f0353524e8e2f8f59bcb0187634059a92d942874672c2cd93b3cccc041b174407457c2f95078e58807a5a57c4bc78b66d1baec  firmware.files
+"

@@ -1,0 +1,54 @@
+# Reference: <https://postmarketos.org/vendorkernel>
+# Kernel config based on: arch/arm64/configs/(CHANGEME!)
+
+pkgname=linux-nubia-nx563j
+pkgver=6.1.0
+pkgrel=0
+pkgdesc="Nubia Z17 mainline kernel fork"
+arch="aarch64"
+_carch="arm64"
+_flavor="nubia-nx563j"
+url="https://kernel.org"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps pmb:cross-native"
+makedepends="bash bc bison devicepkg-dev flex openssl-dev perl gmp-dev mpc1-dev mpfr-dev findutils postmarketos-installkernel"
+
+# Source
+_repository="linux"
+_commit="1d5659fd09334b7d2fefff845088aa97860a2274"
+_config="config-$_flavor.$arch"
+source="
+	$pkgname-$_commit.tar.gz::https://gitlab.com/Rikivt/$_repository/-/archive/1d5659fd09334b7d2fefff845088aa97860a2274/linux-1d5659fd09334b7d2fefff845088aa97860a2274.tar.gz
+	$_config
+"
+builddir="$srcdir/$_repository-$_commit"
+_outdir="out"
+
+prepare() {
+	default_prepare
+	cp "$srcdir/config-$_flavor.$arch" .config
+}
+
+build() {
+	unset LDFLAGS
+	make O="$_outdir" ARCH="$_carch" CC="${CC:-gcc}" \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-postmarketOS"
+}
+
+package() {
+	mkdir -p "$pkgdir"/boot
+	make zinstall modules_install dtbs_install \
+		ARCH="$_carch" \
+		INSTALL_MOD_STRIP=1 \
+		INSTALL_PATH="$pkgdir"/boot \
+		INSTALL_MOD_PATH="$pkgdir" \
+		INSTALL_DTBS_PATH="$pkgdir/usr/share/dtb"
+
+	install -D "$builddir"/include/config/kernel.release \
+		"$pkgdir/usr/share/kernel/$_flavor/kernel.release"
+}
+
+sha512sums="
+ed42d94644f514db9ef186552942c2cb44dda72187bb82692b2642efc930d132c54905c3cffea4cd54b95af3f2814ac6709a277a07b35ea2565339a6e83f7852  linux-nubia-nx563j-1d5659fd09334b7d2fefff845088aa97860a2274.tar.gz
+74cd87dfc3fb301e5a9db2865c773c998ad17b6e8e622cfa5b724f9e2ef98217b0883bd968d81610d9a50b2f3804f83e6503b9006b5968d75feb374339656259  config-nubia-nx563j.aarch64
+"
